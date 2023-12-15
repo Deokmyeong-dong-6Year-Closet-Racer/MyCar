@@ -69,8 +69,8 @@ local.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse
 
-.idea
-build
-DrivingInterface
-.classpath
-.project
+#.idea
+#build
+#DrivingInterface
+#.classpath
+#.project
