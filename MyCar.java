@@ -3,6 +3,7 @@ import strategy.CarControls;
 import strategy.DrivingStrategy;
 import strategy.EmergencyStrategy;
 import strategy.NormalStrategy;
+import strategy.TestStrategy;
 
 public class MyCar {
 
@@ -74,7 +75,7 @@ public class MyCar {
 		} else if (1 == 0) {
 			currentStrategy = new EmergencyStrategy();
 		} else {
-			currentStrategy = new NormalStrategy(); // 기본 전략
+			currentStrategy = new TestStrategy(); // 기본 전략
 		}
 
 		// 선택된 전략 적용
