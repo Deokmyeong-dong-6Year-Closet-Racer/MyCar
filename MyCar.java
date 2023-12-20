@@ -1,13 +1,16 @@
 import DrivingInterface.*;
 import strategy.CarControls;
+import strategy.DrivingPathStrategy;
 import strategy.DrivingStrategy;
 import strategy.EmergencyStrategy;
 import strategy.NormalStrategy;
+import strategy.NormalStrategy2;
+import strategy.TestStrategy;
 
 public class MyCar {
 
 	// 멤버 변수
-	boolean is_debug = true;
+	boolean is_debug = false;
 	static boolean enable_api_control = true;
 
 	public void control_driving(boolean a1, float a2, float a3, float a4, float a5, float a6, float a7, float a8,
@@ -67,15 +70,21 @@ public class MyCar {
 		// Editing area starts from here
 		//
 
+		//// 여기 아래만 수정
+
 		// 차량 상태 평가 및 전략 선택
 		DrivingStrategy currentStrategy;
-		if (1 == 0) {
-			currentStrategy = new NormalStrategy();
+		if (1 == 1) {
+			currentStrategy = new NormalStrategy2();
 		} else if (1 == 0) {
 			currentStrategy = new EmergencyStrategy();
+		} else if (1 == 0) {
+			currentStrategy = new TestStrategy();
 		} else {
 			currentStrategy = new NormalStrategy(); // 기본 전략
 		}
+
+		//// 여기 위만 수정
 
 		// 선택된 전략 적용
 		CarControls result = currentStrategy.applyDrivingStrategy(sensing_info);
@@ -84,7 +93,7 @@ public class MyCar {
 			System.out.println("[MyCar] steering:" + car_controls.steering + ", throttle:" + car_controls.throttle
 					+ ", brake:" + car_controls.brake);
 		}
-		
+
 		car_controls.throttle = result.getThrottle();
 		car_controls.steering = result.getSteering();
 		car_controls.brake = result.getBrake();

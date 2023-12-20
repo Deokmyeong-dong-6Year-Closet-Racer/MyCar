@@ -8,19 +8,8 @@ public class DrivingPathCalculator {
     private static final int TOTAL_DISTANCE = 200;
     private static final int SECTIONS = TOTAL_DISTANCE / SECTION_LENGTH;
 
-    public static void main(String[] args) {
-        double startPosition = 2.5;
-
-        List<Double> optimalPath = calculateOptimalPath(startPosition);
-
-        System.out.println("Optimal Path:");
-        for (Double position : optimalPath) {
-            System.out.println(position);
-        }
-    }
-
     private static List<Double> calculateOptimalPath(double startPosition) {
-        // 각 구간의 노드를 생성
+    	
         Node[][] nodes = new Node[SECTIONS][NODES_PER_SECTION];
         for (int i = 0; i < SECTIONS; i++) {
             for (int j = 0; j < NODES_PER_SECTION; j++) {
