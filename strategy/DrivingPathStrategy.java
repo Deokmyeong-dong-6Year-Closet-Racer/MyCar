@@ -1,8 +1,6 @@
 package strategy;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import DrivingInterface.DrivingInterface.CarStateValues;
 
@@ -11,9 +9,20 @@ public class DrivingPathStrategy implements DrivingStrategy {
 	@Override
 	public CarControls applyDrivingStrategy(CarStateValues sensingInfo) {
 		CarControls controls = new CarControls();
+		
+//		sensing_info.to_middle
+//		sensing_info.collided
+//		sensing_info.speed
+//		sensing_info.moving_forward
+//		sensing_info.moving_angle
+//		sensing_info.track_forward_angles
+//		sensing_info.lap_progress
+//		sensing_info.distance_to_way_points
 
-		setThrottle(sensingInfo, controls);
+
 		setSteering(sensingInfo, controls);
+		setThrottle(sensingInfo, controls);
+		setBrake(sensingInfo, controls);
 
 		return controls;
 	}
@@ -38,13 +47,12 @@ public class DrivingPathStrategy implements DrivingStrategy {
 	}
 
 	private void setSteering(CarStateValues sensingInfo, CarControls controls) {
+		
 		ArrayList<Float> trackForwardAngles = sensingInfo.track_forward_angles;
 		final float roadWidth = 5;
 		final float trackDistance = 10;
 
 		ArrayList<ArrayList<PathNode>> nodes = new ArrayList<>();
-
-		System.out.println("=========");
 
 		float currX = 0;
 		float currY = 0;
@@ -58,12 +66,11 @@ public class DrivingPathStrategy implements DrivingStrategy {
 
 			ArrayList<PathNode> layer = new ArrayList<>();
 
-			for (float j = -roadWidth + 1; j < roadWidth; j += 2) {
+			for (float j = -roadWidth + 1; j < roadWidth; j++) {
 				PathNode node = new PathNode();
 
-				// 중복 계산 최소화
 				float distance = (float) Math.sqrt(trackDistance * trackDistance + j * j);
-				float nodeAngleRadians = (float) Math.atan2(j, trackDistance); // 라디안으로 변환
+				float nodeAngleRadians = (float) Math.atan2(j, trackDistance);
 
 				node.x = currX + distance * (float) Math.cos(trackAngleRadians + nodeAngleRadians);
 				node.y = currY + distance * (float) Math.sin(trackAngleRadians + nodeAngleRadians);
@@ -89,9 +96,6 @@ public class DrivingPathStrategy implements DrivingStrategy {
 					node.cost = min;
 				}
 
-				// System.out.println("(" + node.x + ", " + node.y + "),");
-				System.out.println("node[" + i + "][" + j + "](" + node.x + ", " + node.y + ", " + node.first + "),");
-
 				layer.add(node);
 			}
 
@@ -100,23 +104,23 @@ public class DrivingPathStrategy implements DrivingStrategy {
 
 			nodes.add(layer);
 		}
-		
+
 		float middleAdjustment = ((nodes.get(19).get(3).first - sensingInfo.to_middle) / 40);
-		
+
 		float steerFactor = calculateSteerFactor(sensingInfo.speed);
 		float setSteering = (getReferenceAngle(sensingInfo) - sensingInfo.moving_angle) / (steerFactor + 0.001f);
 		setSteering += middleAdjustment;
 
 		controls.setSteering(setSteering);
-		
-		System.out.println(nodes.get(19).get(3).first - sensingInfo.to_middle );
+
+		System.out.println(nodes.get(19).get(3).first - sensingInfo.to_middle);
 	}
-	
+
 	private float getReferenceAngle(CarStateValues sensingInfo) {
 		int angleNum = (int) (sensingInfo.speed / 45);
 		return angleNum > 0 ? sensingInfo.track_forward_angles.get(angleNum) : 0;
 	}
-	
+
 	private float calculateSteerFactor(float speed) {
 		if (speed > 120) {
 			return speed * 0.62f;
@@ -139,5 +143,9 @@ public class DrivingPathStrategy implements DrivingStrategy {
 		}
 
 		controls.setThrottle(setThrottle);
+	}
+	
+	private void setBrake(CarStateValues sensingInfo, CarControls controls) {
+
 	}
 }

@@ -1,6 +1,7 @@
 import DrivingInterface.*;
 import strategy.CarControls;
 import strategy.DrivingPathStrategy;
+import strategy.DrivingPathStrategy2;
 import strategy.DrivingStrategy;
 import strategy.EmergencyStrategy;
 import strategy.NormalStrategy;
@@ -74,8 +75,11 @@ public class MyCar {
 
 		// 차량 상태 평가 및 전략 선택
 		DrivingStrategy currentStrategy;
-		if (1 == 1) {
+		
+		if (1 == 0) {
 			currentStrategy = new NormalStrategy2();
+		} else if (1 == 1) {
+			currentStrategy = new DrivingPathStrategy2();
 		} else if (1 == 0) {
 			currentStrategy = new EmergencyStrategy();
 		} else if (1 == 0) {
