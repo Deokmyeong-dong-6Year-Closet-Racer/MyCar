@@ -6,6 +6,7 @@ import strategy.DrivingStrategy;
 import strategy.EmergencyStrategy;
 import strategy.NormalStrategy;
 import strategy.NormalStrategy2;
+import strategy.NormalStrategy3;
 import strategy.TestStrategy;
 
 public class MyCar {
@@ -84,6 +85,8 @@ public class MyCar {
 			currentStrategy = new EmergencyStrategy();
 		} else if (1 == 0) {
 			currentStrategy = new TestStrategy();
+		} else if (1 == 0) {
+			currentStrategy = new NormalStrategy3();
 		} else {
 			currentStrategy = new NormalStrategy(); // 기본 전략
 		}
