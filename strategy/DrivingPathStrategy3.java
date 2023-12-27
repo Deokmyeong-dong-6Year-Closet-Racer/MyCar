@@ -78,7 +78,7 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 		return angleInDegrees;
 	}
 
-	// 대충 도로를 나눠서 점을찍고 점마다 가는비용을 다 계산해둠
+	// ��異� �룄濡쒕�� �굹�닠�꽌 �젏�쓣李띻퀬 �젏留덈떎 媛��뒗鍮꾩슜�쓣 �떎 怨꾩궛�빐�몺
 	private ArrayList<ArrayList<PathNode>> createPathNodes(CarStateValues sensingInfo) {
 		ArrayList<Float> trackForwardAngles = sensingInfo.track_forward_angles;
 		final float roadWidth = sensingInfo.half_road_limit - 1.25f;
@@ -183,7 +183,9 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 
 	private void setThrottle(CarStateValues sensingInfo, CarControls controls) {
 		
-		if(sensingInfo.speed < refSpeed)
+		float buff = sensingInfo.speed - refSpeed;
+		
+		if(buff < 0)
 			controls.setThrottle(1f);
 		else
 			controls.setThrottle(0.6f);
@@ -191,9 +193,19 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 	}
 
 	private void setBrake(CarStateValues sensingInfo, CarControls controls) {
-		if(sensingInfo.speed < refSpeed)
-			controls.setBrake(0f);
-		else
-			controls.setBrake(0.1f);
+		
+		float buff = sensingInfo.speed - refSpeed;
+		
+		if(buff > 0) {
+			if(buff > 50)
+				controls.setBrake(0.5f);
+			else if (buff > 30)
+				controls.setBrake(0.2f);
+			else if (buff > 10)
+				controls.setBrake(0.1f);
+		}
+		else {
+			controls.setBrake(0f);			
+		}
 	}
 }
