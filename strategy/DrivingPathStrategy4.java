@@ -190,6 +190,7 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 	private void setSteering(CarStateValues sensingInfo, CarControls controls) {
 
 		int nodeNum = (int) (sensingInfo.speed / 50) + 1;
+		final float roadWidth = sensingInfo.half_road_limit - 1.25f;
 
 		PathNode ref_Node = new PathNode();
 
@@ -204,8 +205,10 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 		ref_Node.x /= nodeNum;
 		ref_Node.y /= nodeNum;
 
-		if(Math.abs(sensingInfo.to_middle) > sensingInfo.half_road_limit - 1.25f)
-			ref_Node = nodes.get(19).get(3).first;
+		System.out.println("ref_Node.y="+ref_Node.y);
+		if(Math.abs(ref_Node.y)> roadWidth){
+			ref_Node.y+=((Math.abs(ref_Node.y)-(roadWidth))+1)*ref_Node.y>0?-1:1;
+		}
 
 		float set_steering = (float) (Math.atan2(ref_Node.y - sensingInfo.to_middle, ref_Node.x)
 				- Math.toRadians(sensingInfo.moving_angle));
