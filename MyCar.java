@@ -17,7 +17,8 @@ public class MyCar {
 	boolean is_debug = true;
 	static boolean enable_api_control = true;
 
-	private boolean isAccident(DrivingInterface.DrivingInterface.CarStateValues sensing_info){
+	private boolean isAccident(DrivingInterface.CarStateValues sensing_info){
+		// 충돌로 인해 멈춘 상태인가 확인
 		if(sensing_info.lap_progress > 0.5 && !is_accident && (sensing_info.speed < 1.0 && sensing_info.speed > -1.0)){
 			accident_count+=1;
 			System.out.println("충돌!!!!!!!!!!!!!!!!!!");
@@ -97,8 +98,6 @@ public class MyCar {
 		// ===========================================================
 		// Editing area starts from here
 		//
-		
-		// 충돌로 인해 멈춘 상태인가 확인
 
 
 		// 차량 상태 평가 및 전략 선택
