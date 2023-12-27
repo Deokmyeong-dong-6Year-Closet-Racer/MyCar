@@ -32,6 +32,10 @@ public class EmergencyStrategy implements DrivingStrategy {
         recovery_count += 1;
         System.out.println("후진...");
         System.out.println(sensing_info.track_forward_obstacles);
+        // 뒤로 밀려나거나 후진 중에 방향 전환 X
+        if (sensing_info.speed < 0) {
+            set_steering = 0;
+        }
 
         return new CarControls(set_throttle, set_steering, set_brake);
 	}

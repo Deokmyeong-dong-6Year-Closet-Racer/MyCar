@@ -17,6 +17,30 @@ public class MyCar {
 	boolean is_debug = true;
 	static boolean enable_api_control = true;
 
+	private boolean isAccident(DrivingInterface.DrivingInterface.CarStateValues sensing_info){
+		if(sensing_info.lap_progress > 0.5 && !is_accident && (sensing_info.speed < 1.0 && sensing_info.speed > -1.0)){
+			accident_count+=1;
+			System.out.println("충돌!!!!!!!!!!!!!!!!!!");
+		}
+		else {
+			accident_count = 0;
+		}
+
+		if(accident_count > 6){ // 차량이 멈췄다고 판단
+			is_accident=true;
+		}
+
+		recovery_count += 1;
+
+		// 충돌 회복
+		if(recovery_count > 20){
+			is_accident=false;
+			recovery_count=0;
+			accident_count=0;
+		}
+		return is_accident;
+	}
+
 	public void control_driving(boolean a1, float a2, float a3, float a4, float a5, float a6, float a7, float a8,
 			float[] a9, float[] a10, float[] a11, float[] a12) {
 
@@ -75,35 +99,17 @@ public class MyCar {
 		//
 		
 		// 충돌로 인해 멈춘 상태인가 확인
-		if(sensing_info.lap_progress > 0.5 && !is_accident && (sensing_info.speed < 1.0 && sensing_info.speed > -1.0)){
-            accident_count+=1;
-            System.out.println("충돌!!!!!!!!!!!!!!!!!!");
-        }
-        else {
-        	accident_count = 0;
-        }
 
-        if(accident_count > 6){ // 차량이 멈췄다고 판단
-            is_accident=true;
-        }
 
 		// 차량 상태 평가 및 전략 선택
 		DrivingStrategy currentStrategy;
-		if (!is_accident) {
+		if (!isAccident(sensing_info)) {
 			currentStrategy = new DrivingPathStrategy2();
-		} else if (is_accident) {
-			currentStrategy = new EmergencyStrategy();
-			recovery_count += 1;
 		} else {
-			currentStrategy = new DrivingPathStrategy2(); // 기본 전략
+			currentStrategy = new EmergencyStrategy();
 		}
 		
-		// 충돌 회복
-		if(recovery_count > 20){
-            is_accident=false;
-            recovery_count=0;
-            accident_count=0;
-        }
+
 
 		// 선택된 전략 적용
 		CarControls result = currentStrategy.applyDrivingStrategy(sensing_info);
@@ -119,16 +125,12 @@ public class MyCar {
 		car_controls.steering = result.getSteering();
 		car_controls.brake = result.getBrake();
 		
-		// 뒤로 밀려나거나 후진 중에 방향 전환 X
-		if (sensing_info.speed < 0) {
-			car_controls.steering = 0;
-		}
-		
 
 		//
 		// Editing area ends
 		// =======================================================
 	}
+
 
 	// ===========================================================
 	// Don't remove below area. ==================================
@@ -144,6 +146,8 @@ public class MyCar {
 	static {
 		System.loadLibrary("DrivingInterface/DrivingInterface");
 	}
+
+
 
 	public static void main(String[] args) {
 		System.out.println("[MyCar] Start Bot! (JAVA)");
