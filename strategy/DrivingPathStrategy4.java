@@ -1,13 +1,11 @@
 package strategy;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 import DrivingInterface.DrivingInterface.CarStateValues;
 import DrivingInterface.DrivingInterface.ObstaclesInfo;
 import pid.PIDController;
-import strategy.DrivingPathStrategy3.PathNode;
 
 public class DrivingPathStrategy4 implements DrivingStrategy {
 
@@ -96,7 +94,7 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 		start.y = sensingInfo.to_middle;
 		start.angle = 0;
 
-		System.out.println("==========");
+		//System.out.println("==========");
 
 		for (int i = 0; i < trackForwardAngles.size(); i++) {
 			float trackAngleRadians = (float) Math.toRadians(trackForwardAngles.get(i));
@@ -146,7 +144,7 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 					node.before = bestPreviousNode;
 				}
 
-				System.out.println("(" + node.x + ", " + node.y + "),");
+				//System.out.println("(" + node.x + ", " + node.y + "),");
 
 				layer.add(node);
 			}
@@ -159,9 +157,9 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 
 		PathNode minCostNode = nodes.get(10).get(nodes.get(19).size() / 2);
 		DrivingPath = new ArrayList<PathNode>();
-		System.out.println("????????????????????");
+		//System.out.println("????????????????????");
 		while (minCostNode != null) {
-			System.out.println("(" + minCostNode.x + ", " + minCostNode.y + "),");
+			//System.out.println("(" + minCostNode.x + ", " + minCostNode.y + "),");
 			DrivingPath.add(minCostNode);
 			minCostNode = minCostNode.before;
 		}
@@ -198,6 +196,9 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 
 		ref_Node.x /= nodeNum;
 		ref_Node.y /= nodeNum;
+
+		if(Math.abs(sensingInfo.to_middle) > sensingInfo.half_road_limit - 1.25f)
+			ref_Node = nodes.get(19).get(3).first;
 
 		float set_steering = (float) (Math.atan2(ref_Node.y - sensingInfo.to_middle, ref_Node.x)
 				- Math.toRadians(sensingInfo.moving_angle));
