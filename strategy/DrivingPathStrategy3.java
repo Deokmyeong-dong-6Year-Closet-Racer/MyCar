@@ -160,9 +160,9 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 		while (minCostNode != null) {
 			// System.out.println("(" + minCostNode.x + ", " + minCostNode.y + "),");
 			DrivingPath.add(minCostNode);
-			Collections.reverse(DrivingPath);
 			minCostNode = minCostNode.before;
 		}
+			Collections.reverse(DrivingPath);
 
 		return nodes;
 	}
