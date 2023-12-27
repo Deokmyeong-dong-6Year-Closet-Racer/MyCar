@@ -1,9 +1,12 @@
 package strategy;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import DrivingInterface.DrivingInterface.CarStateValues;
 import pid.PIDController;
+import strategy.DrivingPathStrategy3.PathNode;
 
 public class DrivingPathStrategy3 implements DrivingStrategy {
 
@@ -12,8 +15,8 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 	float frontCost;
 
 	ArrayList<ArrayList<PathNode>> nodes;
-	PathNode minNode;
-	
+	ArrayList<PathNode> DrivingPath;
+
 	float refSpeed;
 
 	@Override
@@ -30,18 +33,17 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 //		sensing_info.distance_to_way_points
 
 		nodes = createPathNodes(sensingInfo);
-		minNode = nodes.get(19).get(nodes.get(19).size() / 2);
-		
-		frontCost = nodes.get(10).get(nodes.get(19).size() / 2).cost;
+
+		frontCost = DrivingPath.get(10).cost;
 		System.out.println(frontCost);
-		
-		if(frontCost < 150)
+
+		if (frontCost < 150)
 			refSpeed = 200;
-		else if(frontCost < 300)
+		else if (frontCost < 300)
 			refSpeed = 130;
-		else 
+		else
 			refSpeed = 100;
-		
+
 		setSteering(sensingInfo, controls);
 		setThrottle(sensingInfo, controls);
 		setBrake(sensingInfo, controls);
@@ -152,19 +154,36 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 			nodes.add(layer);
 		}
 
-//		PathNode minCostNode = nodes.get(19).get(2);
-//		System.out.println("????????????????????");
-//		while (minCostNode != null) {
-//			System.out.println("(" + minCostNode.x + ", " + minCostNode.y + "),");
-//			minCostNode = minCostNode.before;
-//		}
+		PathNode minCostNode = nodes.get(10).get(nodes.get(19).size() / 2);
+		DrivingPath = new ArrayList<PathNode>();
+		// System.out.println("????????????????????");
+		while (minCostNode != null) {
+			// System.out.println("(" + minCostNode.x + ", " + minCostNode.y + "),");
+			DrivingPath.add(minCostNode);
+			Collections.reverse(DrivingPath);
+			minCostNode = minCostNode.before;
+		}
 
 		return nodes;
 	}
 
 	private void setSteering(CarStateValues sensingInfo, CarControls controls) {
 
-		PathNode ref_Node = minNode.first;
+		int nodeNum = (int) (sensingInfo.speed / 50) + 1;
+
+		PathNode ref_Node = new PathNode();
+
+		ref_Node.x = 0;
+		ref_Node.y = 0;
+
+		for (int i = 0; i < nodeNum; i++) {
+			ref_Node.x += DrivingPath.get(i).x;
+			ref_Node.y += DrivingPath.get(i).y;
+		}
+
+		ref_Node.x /= nodeNum;
+		ref_Node.y /= nodeNum;
+
 		float set_steering = (float) (Math.atan2(ref_Node.y - sensingInfo.to_middle, ref_Node.x)
 				- Math.toRadians(sensingInfo.moving_angle));
 
@@ -182,30 +201,29 @@ public class DrivingPathStrategy3 implements DrivingStrategy {
 	}
 
 	private void setThrottle(CarStateValues sensingInfo, CarControls controls) {
-		
+
 		float buff = sensingInfo.speed - refSpeed;
-		
-		if(buff < 0)
+
+		if (buff < 0)
 			controls.setThrottle(1f);
 		else
 			controls.setThrottle(0.6f);
-		
+
 	}
 
 	private void setBrake(CarStateValues sensingInfo, CarControls controls) {
-		
+
 		float buff = sensingInfo.speed - refSpeed;
-		
-		if(buff > 0) {
-			if(buff > 50)
+
+		if (buff > 0) {
+			if (buff > 50)
 				controls.setBrake(0.5f);
 			else if (buff > 30)
 				controls.setBrake(0.2f);
 			else if (buff > 10)
 				controls.setBrake(0.1f);
-		}
-		else {
-			controls.setBrake(0f);			
+		} else {
+			controls.setBrake(0f);
 		}
 	}
 }
