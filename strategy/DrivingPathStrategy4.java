@@ -82,7 +82,7 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 	private void createPathNodes(CarStateValues sensingInfo) {
 		ArrayList<Float> trackForwardAngles = sensingInfo.track_forward_angles;
 		final float roadWidth = sensingInfo.half_road_limit - 1.25f;
-		final float trackDistance = 10;
+		float trackDistance;
 
 		nodes = new ArrayList<>();
 
@@ -99,6 +99,13 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 		for (int i = 0; i < trackForwardAngles.size(); i++) {
 			float trackAngleRadians = (float) Math.toRadians(trackForwardAngles.get(i));
 			ArrayList<PathNode> layer = new ArrayList<>();
+
+			if(i == 0) {
+				float d = sensingInfo.distance_to_way_points.get(0);
+				trackDistance = (float) Math.sqrt(d * d + start.y * start.y);
+			} else {				
+				trackDistance = 10;
+			}
 
 			for (float j = -roadWidth + 2.5f; j < roadWidth - 2.5f; j++) {
 				PathNode node = new PathNode();
@@ -172,8 +179,8 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 		float nodeToMiddle = node.pivot;
 		
 		for (ObstaclesInfo obstacles : sensingInfo.track_forward_obstacles) {
-			if (((obstacles.dist + 2) > nodeDistance) && ((obstacles.dist - 2) < nodeDistance)
-					&& ((obstacles.to_middle - 2) < nodeToMiddle) && ((obstacles.to_middle + 2) > nodeToMiddle))
+			if (((obstacles.dist + 2) > nodeDistance) && ((obstacles.dist - 12) < nodeDistance)
+					&& ((obstacles.to_middle - 3) < nodeToMiddle) && ((obstacles.to_middle + 3) > nodeToMiddle))
 				return false;
 		}
 
