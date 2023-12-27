@@ -1,43 +1,44 @@
 import DrivingInterface.*;
 import strategy.CarControls;
 import strategy.DrivingPathStrategy2;
+import strategy.DrivingPathStrategy3;
 import strategy.DrivingStrategy;
 import strategy.EmergencyStrategy;
 import strategy.MovingStrategy;
 import strategy.NormalStrategy;
 
 public class MyCar {
-	
-	int accident_count =0;
-    float accident_time=0;
-    boolean is_accident;
-    private int recovery_count;
+
+	int accident_count = 0;
+	float accident_time = 0;
+	boolean is_accident;
+	private int recovery_count;
 
 	// 멤버 변수
-	boolean is_debug = true;
+	boolean is_debug = false;
 	static boolean enable_api_control = true;
 
-	private boolean isAccident(DrivingInterface.CarStateValues sensing_info){
+	private boolean isAccident(DrivingInterface.CarStateValues sensing_info) {
 		// 충돌로 인해 멈춘 상태인가 확인
-		if(sensing_info.lap_progress > 0.5 && !is_accident && (sensing_info.speed < 1.0 && sensing_info.speed > -1.0)){
-			accident_count+=1;
+		if (sensing_info.lap_progress > 0.5 && !is_accident
+				&& (sensing_info.speed < 1.0 && sensing_info.speed > -1.0)) {
+			accident_count += 1;
 			System.out.println("충돌!!!!!!!!!!!!!!!!!!");
-		}
-		else {
+		} else {
 			accident_count = 0;
 		}
 
-		if(accident_count > 6){ // 차량이 멈췄다고 판단
-			is_accident=true;
+		if (accident_count > 6) { // 차량이 멈췄다고 판단
+			is_accident = true;
 		}
 
 		recovery_count += 1;
 
 		// 충돌 회복
-		if(recovery_count > 20){
-			is_accident=false;
-			recovery_count=0;
-			accident_count=0;
+		if (recovery_count > 20) {
+			is_accident = false;
+			recovery_count = 0;
+			accident_count = 0;
 		}
 		return is_accident;
 	}
@@ -99,37 +100,31 @@ public class MyCar {
 		// Editing area starts from here
 		//
 
-
 		// 차량 상태 평가 및 전략 선택
 		DrivingStrategy currentStrategy;
 		if (!isAccident(sensing_info)) {
-			currentStrategy = new DrivingPathStrategy2();
+			currentStrategy = new DrivingPathStrategy3();
 		} else {
 			currentStrategy = new EmergencyStrategy();
 		}
-		
-
 
 		// 선택된 전략 적용
 		CarControls result = currentStrategy.applyDrivingStrategy(sensing_info);
 
 		if (is_debug) {
 			System.out.println("[MyCar] steering:" + car_controls.steering + ", throttle:" + car_controls.throttle
-					+ ", brake:" + car_controls.brake
-					+ ", middle:" + sensing_info.to_middle + ", .moving_angle:" + sensing_info.moving_angle
-					+ ", speed:" + sensing_info.speed);
+					+ ", brake:" + car_controls.brake + ", middle:" + sensing_info.to_middle + ", .moving_angle:"
+					+ sensing_info.moving_angle + ", speed:" + sensing_info.speed);
 		}
-		
+
 		car_controls.throttle = result.getThrottle();
 		car_controls.steering = result.getSteering();
 		car_controls.brake = result.getBrake();
-		
 
 		//
 		// Editing area ends
 		// =======================================================
 	}
-
 
 	// ===========================================================
 	// Don't remove below area. ==================================
@@ -145,8 +140,6 @@ public class MyCar {
 	static {
 		System.loadLibrary("DrivingInterface/DrivingInterface");
 	}
-
-
 
 	public static void main(String[] args) {
 		System.out.println("[MyCar] Start Bot! (JAVA)");
