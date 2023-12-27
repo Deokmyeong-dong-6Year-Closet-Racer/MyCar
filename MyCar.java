@@ -1,10 +1,8 @@
 import DrivingInterface.*;
 import strategy.CarControls;
-import strategy.DrivingPathStrategy3;
+import strategy.DrivingPathStrategy4;
 import strategy.DrivingStrategy;
 import strategy.EmergencyStrategy;
-import strategy.MovingStrategy;
-import strategy.NormalStrategy;
 
 public class MyCar {
 
