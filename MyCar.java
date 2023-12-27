@@ -1,6 +1,5 @@
 import DrivingInterface.*;
 import strategy.CarControls;
-import strategy.DrivingPathStrategy2;
 import strategy.DrivingPathStrategy3;
 import strategy.DrivingStrategy;
 import strategy.EmergencyStrategy;
@@ -14,27 +13,27 @@ public class MyCar {
 	boolean is_accident;
 	private int recovery_count;
 
-	// 멤버 변수
+	// 硫ㅻ쾭 蹂��닔
 	boolean is_debug = false;
 	static boolean enable_api_control = true;
 
 	private boolean isAccident(DrivingInterface.CarStateValues sensing_info) {
-		// 충돌로 인해 멈춘 상태인가 확인
+		// 異⑸룎濡� �씤�빐 硫덉텣 �긽�깭�씤媛� �솗�씤
 		if (sensing_info.lap_progress > 0.5 && !is_accident
 				&& (sensing_info.speed < 1.0 && sensing_info.speed > -1.0)) {
 			accident_count += 1;
-			System.out.println("충돌!!!!!!!!!!!!!!!!!!");
+			System.out.println("異⑸룎!!!!!!!!!!!!!!!!!!");
 		} else {
 			accident_count = 0;
 		}
 
-		if (accident_count > 6) { // 차량이 멈췄다고 판단
+		if (accident_count > 6) { // 李⑤웾�씠 硫덉톬�떎怨� �뙋�떒
 			is_accident = true;
 		}
 
 		recovery_count += 1;
 
-		// 충돌 회복
+		// 異⑸룎 �쉶蹂�
 		if (recovery_count > 20) {
 			is_accident = false;
 			recovery_count = 0;
@@ -100,15 +99,15 @@ public class MyCar {
 		// Editing area starts from here
 		//
 
-		// 차량 상태 평가 및 전략 선택
+		// 李⑤웾 �긽�깭 �룊媛� 諛� �쟾�왂 �꽑�깮
 		DrivingStrategy currentStrategy;
 		if (!isAccident(sensing_info)) {
-			currentStrategy = new DrivingPathStrategy3();
+			currentStrategy = new DrivingPathStrategy4();
 		} else {
 			currentStrategy = new EmergencyStrategy();
 		}
 
-		// 선택된 전략 적용
+		// �꽑�깮�맂 �쟾�왂 �쟻�슜
 		CarControls result = currentStrategy.applyDrivingStrategy(sensing_info);
 
 		if (is_debug) {
