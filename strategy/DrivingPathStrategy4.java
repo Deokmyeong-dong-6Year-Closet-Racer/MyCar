@@ -117,9 +117,6 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 				node.y = currY + distance * (float) Math.sin(trackAngleRadians + nodeAngleRadians);
 				node.pivot = j;
 
-				if (!checkObstacles(sensingInfo, node))
-					continue;
-
 				if (i == 0) {
 					node.angle = calculateAngleBetweenNodes(node, start);
 					node.first = node;
@@ -150,6 +147,9 @@ public class DrivingPathStrategy4 implements DrivingStrategy {
 					node.angle = minAngle;
 					node.before = bestPreviousNode;
 				}
+				
+				if (!checkObstacles(sensingInfo, node))
+					node.cost = Float.MAX_VALUE;
 
 				//System.out.println("(" + node.x + ", " + node.y + "),");
 
